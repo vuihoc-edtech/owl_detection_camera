@@ -5,7 +5,7 @@
 //  Created by Josh on 2022/3/18.
 //
 
-import Foundation
+
 import CoreImage
 import UIKit
 import AVFoundation
@@ -202,42 +202,46 @@ extension CameraController : AVCapturePhotoCaptureDelegate,AVCaptureVideoDataOut
             let translate = CGAffineTransform.identity.scaledBy(x: self.mScreenCGSize!.width, y: self.mScreenCGSize!.height)
 
             // The coordinates are normalized to the dimensions of the processed image, with the origin at the image's lower-left corner.
+            //Tọa độ được chuẩn hóa theo kích thước của hình ảnh được xử lý, với điểm gốc ở góc dưới bên trái của hình ảnh.
             self.mFacebounds = face.boundingBox.applying(translate).applying(transform)
 
             let pendingWidth = (Int(self.mScreenCGSize!.width) - SwiftOwlDetectionCameraPlugin.sFaceFrameWidth)/2;
             let pendingHeight = (Int(self.mScreenCGSize!.height) - SwiftOwlDetectionCameraPlugin.sFaceFrameHeight)/2;
 
             let chectRect = CGRect(origin:CGPoint(x:pendingWidth,y:pendingHeight),size:CGSize(width: SwiftOwlDetectionCameraPlugin.sFaceFrameWidth, height: SwiftOwlDetectionCameraPlugin.sFaceFrameHeight));
-
+//            let pendingWidth = 100
+//            let pendingHeight = 100
+//
+//            let chectRect = CGRect(origin:CGPoint(x:pendingWidth,y:pendingHeight),size:CGSize(width: SwiftOwlDetectionCameraPlugin.sFaceFrameWidth, height: SwiftOwlDetectionCameraPlugin.sFaceFrameHeight));
             if(self.mCountWrongPost==0)
             {
                 self.mFaceDetectionHintCallback!(Define.DETECTION_HINT_FIT_CENTER);
                 self.mCountWrongPost = Define.COUNT_WRONG_POST_DELAY_TIME;
             }
 
-            //偵測臉的位置的線匡，丟回去給UI做顯示
+            //Dòng phát hiện vị trí của khuôn mặt và đưa nó trở lại UI để hiển thị
             self.faceVisionFrameResult!(face);
 
-            //檢查是否有在人臉框內
+            //Kiểm tra xem có trong khung mặt không
             if(chectRect.contains(self.mFacebounds!))
             {
-                if(min(chectRect.width,self.mFacebounds!.height) < (chectRect.width)/1.3)
-                {
-                    //too far
-                    if(self.mCountWrongPost < 10)
-                    {
-                        self.mCountWrongPost = Define.COUNT_WRONG_POST_DELAY_TIME;
-                        self.mFaceDetectionHintCallback!(Define.DETECTION_HINT_FORWARD);
-                    }
-                    else{
-                        self.mCountWrongPost-=1;
-                    }
-                }
-                else{
+//                if(min(chectRect.width,self.mFacebounds!.height) < (chectRect.width)/1.3)
+//                {
+//                    //too far
+//                    if(self.mCountWrongPost < 1000)
+//                    {
+//                        self.mCountWrongPost = Define.COUNT_WRONG_POST_DELAY_TIME;
+//                        self.mFaceDetectionHintCallback!(Define.DETECTION_HINT_FORWARD);
+//                    }
+//                    else{
+//                        self.mCountWrongPost-=1;
+//                    }
+//                }
+//                else{
                     self.mHasFace = true;
                     self.mCountWrongPost = 0;
                     break;
-                }
+//                }
             }
             else
             {
@@ -260,7 +264,7 @@ extension CameraController : AVCapturePhotoCaptureDelegate,AVCaptureVideoDataOut
             }
         }
     }
-    
+
     //Handlers 是指當你想要 Framework 在 Request 產生後執行一些東西或處理這個 Request 時
     func handleFaces(request: VNRequest, error: Error?)
     {
@@ -370,17 +374,17 @@ extension CameraController : AVCapturePhotoCaptureDelegate,AVCaptureVideoDataOut
                 let images = Utility.imageFromSampleBuffer(sampleBuffer: buffer);
                 
                 //flip image for mirror
-                let newImage = images.rotate(radians: .pi/2)!.withHorizontallyFlippedOrientation()
-                let moreGap:CGFloat = 70
+                let newImage = images.rotate(radians: .pi)!.withHorizontallyFlippedOrientation()
+//                let moreGap:CGFloat = 300
                 let widthRatio = (newImage.size.width/self.mScreenCGSize!.width);
                 let heightRatio = (newImage.size.height/self.mScreenCGSize!.height);
                 print("widthRatio:\(widthRatio) heightRatio: \(heightRatio)");
                 
                 var realPiexl = rotateRect(CGRect(origin: CGPoint(x:(self.mFacebounds!.origin.x * widthRatio),y:self.mFacebounds!.origin.y*heightRatio), size:CGSize(width:(self.mFacebounds!.width)*widthRatio,height:(self.mFacebounds!.height)*heightRatio)));
-                realPiexl.size.width = realPiexl.width + moreGap
-                realPiexl.size.height = realPiexl.height + moreGap
-                realPiexl.origin.x = realPiexl.origin.x - moreGap;
-                realPiexl.origin.y = realPiexl.origin.y - moreGap;
+                realPiexl.size.width = realPiexl.width + 150;
+                realPiexl.size.height = realPiexl.height + 500;
+                realPiexl.origin.x = realPiexl.origin.x - 20 ;
+                realPiexl.origin.y = realPiexl.origin.y - 300;
                 
                 let cropImage = newImage.cropImage1( newImage , realPiexl);
                 
@@ -577,7 +581,7 @@ extension CameraController : AVCapturePhotoCaptureDelegate,AVCaptureVideoDataOut
         print(" self.previewLayer?.bounds: \(self.previewLayer?.bounds)");
 
         self.previewLayer?.videoGravity = AVLayerVideoGravity.resizeAspectFill
-        self.previewLayer?.connection?.videoOrientation = .portrait
+        self.previewLayer?.connection?.videoOrientation = .landscapeRight
         
         view.layer.insertSublayer(self.previewLayer!, at: 0)
         self.previewLayer?.frame = view.frame

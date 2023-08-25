@@ -25,9 +25,9 @@ class CameraCV : UIViewController
     
     var mDisableHint:Bool = false;
     
-    var mHintCenter:String = "請將臉部，對應人像框";
-    var mHintForward:String = "請向前一點";
-    var mHintBackward:String = "有點太近了";
+    var mHintCenter:String = "Hãy căn chỉnh khuôn mặt với khung chân dung";
+    var mHintForward:String = "xin vui lòng tiến về phía trước";
+    var mHintBackward:String = "hơi quá gần";
     
     var mFullScreenSize:CGSize?;
     

@@ -114,7 +114,7 @@ class _PreviewState  extends State<Preview>
   {
     updateView();
     return Image.file(File(aFilePath),
-      scale: 4,
+3      scale: 1,
       fit: BoxFit.fill,
     );
   }
