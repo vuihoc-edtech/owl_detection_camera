@@ -115,24 +115,24 @@ extension CameraCV
     
     func showFaceDetectionHint(aValue:Int)
     {
-        if(mDisableHint){
-            return;
-        }
-        
-        switch(aValue)
-        {
-            case Define.DETECTION_HINT_FIT_CENTER:
-                Utility.showToast(controller: self, message : self.mHintCenter, seconds: 1.0)
-                break
-            case Define.DETECTION_HINT_FORWARD:
-                Utility.showToast(controller: self, message : self.mHintForward, seconds: 1.0)
-                break
-            case Define.DETECTION_HINT_BACKWARD:
-                Utility.showToast(controller: self, message : self.mHintBackward, seconds: 1.0)
-                break
-            default:
-                return;
-        }
+//        if(mDisableHint){
+//            return;
+//        }
+//
+//        switch(aValue)
+//        {
+//            case Define.DETECTION_HINT_FIT_CENTER:
+//                Utility.showToast(controller: self, message : self.mHintCenter, seconds: 1.0)
+//                break
+//            case Define.DETECTION_HINT_FORWARD:
+//                Utility.showToast(controller: self, message : self.mHintForward, seconds: 1.0)
+//                break
+//            case Define.DETECTION_HINT_BACKWARD:
+//                Utility.showToast(controller: self, message : self.mHintBackward, seconds: 1.0)
+//                break
+//            default:
+//                return;
+//        }
     }
     
     func setScreenBright(_ aValue:Int)
