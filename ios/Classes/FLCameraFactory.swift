@@ -10,7 +10,7 @@ import Flutter
 import UIKit
 import AVFoundation
 import SwiftUI
-@available(iOS 11.0, *)
+@available(iOS 10.0, *)
 class FLCameraFactory: NSObject, FlutterPlatformViewFactory
 {
     private var messenger: FlutterBinaryMessenger
@@ -30,7 +30,7 @@ class FLCameraFactory: NSObject, FlutterPlatformViewFactory
         return flCameraView
     }
 }
-@available(iOS 11.0, *)
+@available(iOS 10.0, *)
 class FLCameraView: NSObject, FlutterPlatformView
 {
     private var _view: UIView

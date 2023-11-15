@@ -14,7 +14,7 @@ protocol CameraVCDelegate
 {
     func captureHeadshot(_ image:UIImage,_ memberId:String)
 }
-@available(iOS 11.0, *)
+@available(iOS 10.0, *)
 class CameraCV : UIViewController
 {
     @IBOutlet weak var captureCameraPreview: UIView!
@@ -40,7 +40,7 @@ class CameraCV : UIViewController
     //隱藏StatusBar
     //    override var prefersStatusBarHidden: Bool{ return true }
 }
-@available(iOS 11.0, *)
+@available(iOS 10.0, *)
 extension CameraCV
 {
     override func viewDidLoad()
