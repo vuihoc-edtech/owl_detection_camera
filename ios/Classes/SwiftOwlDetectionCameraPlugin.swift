@@ -1,6 +1,6 @@
 import Flutter
 import UIKit
-@available(iOS 10.0, *)
+
 public class SwiftOwlDetectionCameraPlugin: NSObject, FlutterPlugin
 {
     static var sFaceFrameWidth = 0

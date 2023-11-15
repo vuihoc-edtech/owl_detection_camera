@@ -10,7 +10,7 @@ import Flutter
 import UIKit
 import AVFoundation
 import SwiftUI
-@available(iOS 10.0, *)
+
 class FLCameraFactory: NSObject, FlutterPlatformViewFactory
 {
     private var messenger: FlutterBinaryMessenger
@@ -30,7 +30,7 @@ class FLCameraFactory: NSObject, FlutterPlatformViewFactory
         return flCameraView
     }
 }
-@available(iOS 10.0, *)
+
 class FLCameraView: NSObject, FlutterPlatformView
 {
     private var _view: UIView
@@ -66,16 +66,21 @@ class FLCameraView: NSObject, FlutterPlatformView
         //   var controller: UIViewController = storyboard.instantiateViewController(withIdentifier: "CameraVC") as UIViewController
         
         //使用所產生的Native.storyboard,初始化VC為CameraCV
-        let storyboard = UIStoryboard.init(name: "Native", bundle: Bundle.init(for: CameraCV.self))
+        if #available(iOS 11.0, *) {
+            let storyboard = UIStoryboard.init(name: "Native", bundle: Bundle.init(for: CameraCV.self))
+            //對應到Native.storyboard內Storyboard的名稱為CameraStoryboard
+            let controller = storyboard.instantiateViewController(withIdentifier: "CameraStoryboard") as! CameraCV
+
+            controller.setSwiftFlutterOwlCameraPlugin(aSwiftFlutterOwlCameraPlugin: mSwiftFlutterOwlCameraPlugin!)
+
+            _view.addSubview(controller.view)
+            controller.view.frame = _view.bounds
+
+        } else {
+            // Fallback on earlier versions
+        }
         
-        //對應到Native.storyboard內Storyboard的名稱為CameraStoryboard
-        let controller = storyboard.instantiateViewController(withIdentifier: "CameraStoryboard") as! CameraCV
-        
-        controller.setSwiftFlutterOwlCameraPlugin(aSwiftFlutterOwlCameraPlugin: mSwiftFlutterOwlCameraPlugin!)
-        
-        _view.addSubview(controller.view)
-        controller.view.frame = _view.bounds
-        
+
         //add as a childviewcontroller
         //   addChildViewController(controller)
         

@@ -14,7 +14,7 @@ protocol CameraVCDelegate
 {
     func captureHeadshot(_ image:UIImage,_ memberId:String)
 }
-@available(iOS 10.0, *)
+@available(iOS 11.0, *)
 class CameraCV : UIViewController
 {
     @IBOutlet weak var captureCameraPreview: UIView!
@@ -40,7 +40,7 @@ class CameraCV : UIViewController
     //隱藏StatusBar
     //    override var prefersStatusBarHidden: Bool{ return true }
 }
-@available(iOS 10.0, *)
+@available(iOS 11.0, *)
 extension CameraCV
 {
     override func viewDidLoad()
@@ -54,9 +54,9 @@ extension CameraCV
         self.cameraController.setQRcodeCallback(qrcodeCallback);//QRcode
         self.cameraController.setFaceDetectionHintCallback(showFaceDetectionHint);
         self.cameraController.setFullScreenSize(aSize: self.mFullScreenSize!);
-        
+
         deleteDirFile();
-        
+
         SwiftOwlDetectionCameraPlugin.setMethodCallback(aMethodCallback: MethodCallback(
             { ()->() in //Stop face detection
                 self.cameraController.isStop = true
@@ -84,7 +84,7 @@ extension CameraCV
                 self.mHintBackward = aBackward;
             },
             { ()->() in
-               
+
                 if(self.mCameraLensPosition == Define.FRONT_CAMERA)
                 {
                     self.mCameraLensPosition = Define.REAR_CAMERA;
@@ -92,7 +92,7 @@ extension CameraCV
                 else{
                     self.mCameraLensPosition = Define.FRONT_CAMERA;
                 }
-                                
+
                 self.cameraController.setCameraLens(aLens: self.mCameraLensPosition);
             }
         ));
@@ -195,7 +195,7 @@ extension CameraCV
             {
                 print(error)
             }
-            
+
             try? self.cameraController.displayPreview(to: self.captureCameraPreview)
         }
     }

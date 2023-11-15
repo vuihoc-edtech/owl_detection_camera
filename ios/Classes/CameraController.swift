@@ -11,7 +11,7 @@ import UIKit
 import AVFoundation
 import Vision
 
-@available(iOS 10.0, *)
+@available(iOS 11.0, *)
 class CameraController: NSObject,AVCaptureMetadataOutputObjectsDelegate
 {
     // TODO: Decide camera position --- front or back
@@ -68,7 +68,7 @@ class CameraController: NSObject,AVCaptureMetadataOutputObjectsDelegate
 
 //AVCapturePhotoCaptureDelegate: 擷取照片Caputre的事件.
 //AVCaptureVideoDataOutputSampleBufferDelegate: 每一個進來的Frame的事件.
-@available(iOS 10.0, *)
+@available(iOS 11.0, *)
 extension CameraController : AVCapturePhotoCaptureDelegate,AVCaptureVideoDataOutputSampleBufferDelegate
 {
     enum CameraControllerError: Swift.Error
