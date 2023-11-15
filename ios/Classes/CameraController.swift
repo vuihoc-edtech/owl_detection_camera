@@ -52,6 +52,7 @@ class CameraController: NSObject,AVCaptureMetadataOutputObjectsDelegate
     
     var mHasFace = false;
     var mIsHandleResultToServer = true;
+    var isStop = false
     
     var mFacebounds:CGRect?;
     
@@ -62,6 +63,7 @@ class CameraController: NSObject,AVCaptureMetadataOutputObjectsDelegate
     
     //Requests 是指當你要求 Framework 為你偵測一些東西時
     private var requests = [VNRequest]()
+    
 }
 
 //AVCapturePhotoCaptureDelegate: 擷取照片Caputre的事件.
@@ -91,8 +93,7 @@ extension CameraController : AVCapturePhotoCaptureDelegate,AVCaptureVideoDataOut
         print("aSize width: \(aSize.width) height: \(aSize.height)");
     }
     
-    func setFaceHandleStatus(aValue:Bool)
-    {
+    func setFaceHandleStatus(aValue: Bool) {
         mIsHandleResultToServer = aValue;
         mHasFace = false;
     }
@@ -191,7 +192,7 @@ extension CameraController : AVCapturePhotoCaptureDelegate,AVCaptureVideoDataOut
     func checkIncludFace(request: VNRequest)
     {
         //perform all the UI updates on the main queue
-        guard let results = request.results as? [VNFaceObservation] else { return }
+        guard let results = request.results as? [VNFaceObservation], !isStop else { return }
 
         //  self.previewView.removeMask()
 

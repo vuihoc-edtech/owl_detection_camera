@@ -59,10 +59,15 @@ extension CameraCV
         
         SwiftOwlDetectionCameraPlugin.setMethodCallback(aMethodCallback: MethodCallback(
             { ()->() in //Stop face detection
+                self.cameraController.isStop = true
                 self.cameraController.setFaceHandleStatus(aValue: true)
             },
             { ()->() in //Start face detection
-                self.cameraController.setFaceHandleStatus(aValue: false)
+                if !self.cameraController.isStop {
+                    self.cameraController.setFaceHandleStatus(aValue: false)
+                } else {
+                    self.cameraController.isStop = false
+                }
             },
             { (aValue:Int)->() in //screen bright
                 self.setScreenBright(aValue);
