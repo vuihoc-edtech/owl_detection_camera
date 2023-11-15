@@ -223,10 +223,9 @@ extension CameraController : AVCapturePhotoCaptureDelegate,AVCaptureVideoDataOut
 
             //Dòng phát hiện vị trí của khuôn mặt và đưa nó trở lại UI để hiển thị
             self.faceVisionFrameResult!(face);
-
+            self.mHasFace = true;
             //Kiểm tra xem có trong khung mặt không
-            if(chectRect.contains(self.mFacebounds!))
-            {
+//            if(chectRect.contains(self.mFacebounds!)){
 //                if(min(chectRect.width,self.mFacebounds!.height) < (chectRect.width)/1.3)
 //                {
 //                    //too far
@@ -240,30 +239,30 @@ extension CameraController : AVCapturePhotoCaptureDelegate,AVCaptureVideoDataOut
 //                    }
 //                }
 //                else{
-                    self.mHasFace = true;
-                    self.mCountWrongPost = 0;
-                    break;
+//                    self.mHasFace = true;
+//                    self.mCountWrongPost = 0;
+//                    break;
 //                }
-            }
-            else
-            {
-                if(self.mCountWrongPost < 10)
-                {
-                    let distance = sqrt((chectRect.width/2 - self.mFacebounds!.width/2)*2 + (chectRect.height/2 - self.mFacebounds!.height/2)*2);
-
-                    //too close
-                    if(distance<45 && (chectRect.width < self.mFacebounds!.width || chectRect.height < self.mFacebounds!.height))
-                    {
-                        self.mCountWrongPost = Define.COUNT_WRONG_POST_DELAY_TIME;
-                        self.mFaceDetectionHintCallback!(Define.DETECTION_HINT_BACKWARD);
-                    }
-                }
-
-                if(self.mCountWrongPost>=10)
-                {
-                    self.mCountWrongPost-=1;
-                }
-            }
+//            }
+//            else
+//            {
+//                if(self.mCountWrongPost < 5)
+//                {
+//                    let distance = sqrt((chectRect.width/2 - self.mFacebounds!.width/2)*2 + (chectRect.height/2 - self.mFacebounds!.height/2)*2);
+//
+//                    //too close
+//                    if(distance<45 && (chectRect.width < self.mFacebounds!.width || chectRect.height < self.mFacebounds!.height))
+//                    {
+//                        self.mCountWrongPost = Define.COUNT_WRONG_POST_DELAY_TIME;
+//                        self.mFaceDetectionHintCallback!(Define.DETECTION_HINT_BACKWARD);
+//                    }
+//                }
+//
+//                if(self.mCountWrongPost>=5)
+//                {
+//                    self.mCountWrongPost-=1;
+//                }
+//            }
         }
     }
 
