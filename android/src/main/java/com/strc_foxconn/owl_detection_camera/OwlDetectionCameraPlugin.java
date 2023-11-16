@@ -189,7 +189,7 @@ public class OwlDetectionCameraPlugin implements FlutterPlugin, MethodCallHandle
   public void onAttachedToActivity(@NonNull ActivityPluginBinding binding)
   {
     mActivity = binding.getActivity();
-    mActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//    mActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
   }
 
   @Override
