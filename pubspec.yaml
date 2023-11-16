@@ -27,9 +27,9 @@ flutter:
   # adding or updating assets for this project.
   plugin:
     platforms:
-      android:
-        package: com.strc_foxconn.owl_detection_camera
-        pluginClass: OwlDetectionCameraPlugin
+#      android:
+#        package: com.strc_foxconn.owl_detection_camera
+#        pluginClass: OwlDetectionCameraPlugin
       ios:
         pluginClass: OwlDetectionCameraPlugin
 
