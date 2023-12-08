@@ -8,6 +8,9 @@
 import Foundation
 class Utility
 {
+    
+    static var workingDir = "owl-temp";
+    
     static var sLastTimePath:URL?;
     
     static func showToast(controller: UIViewController, message : String, seconds: Double)
@@ -28,7 +31,15 @@ class Utility
     static func save(image: UIImage) -> [String]
     {
         let uuid = UUID().uuidString
-        let fileName = uuid+".jpg";
+        let fileName = "/\(workingDir)/"+uuid+".jpg";
+        let filePath = documentsUrl.appendingPathComponent(Utility.workingDir);
+        if !FileManager.default.fileExists(atPath: filePath.path) {
+            do {
+                try FileManager.default.createDirectory(atPath: filePath.path, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                print("Hau \(error.localizedDescription)");
+            }
+        }
         
         let fileURLss = documentsUrl.appendingPathComponent(fileName)
         let scaleImage = image.scaleImage(scaleSize: 0.3);
