@@ -55,7 +55,7 @@ extension CameraCV
         self.cameraController.setFaceDetectionHintCallback(showFaceDetectionHint);
         self.cameraController.setFullScreenSize(aSize: self.mFullScreenSize!);
 
-        deleteDirFile();
+         deleteDirFile();
 
         SwiftOwlDetectionCameraPlugin.setMethodCallback(aMethodCallback: MethodCallback(
             { ()->() in //Stop face detection
@@ -101,11 +101,13 @@ extension CameraCV
     func deleteDirFile()
     {
         let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-        guard let items = try? FileManager.default.contentsOfDirectory(atPath: path) else { return }
+        let tmp = path.appending("/\(Utility.workingDir)/")
+        
+        guard let items = try? FileManager.default.contentsOfDirectory(atPath: tmp) else { return }
         
         for item in items {
             // This can be made better by using pathComponent
-            let completePath = path.appending("/").appending(item)
+            let completePath = tmp.appending("/").appending(item)
             try? FileManager.default.removeItem(atPath: completePath)
         }
         
