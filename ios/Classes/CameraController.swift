@@ -189,7 +189,7 @@ extension CameraController : AVCapturePhotoCaptureDelegate,AVCaptureVideoDataOut
         return exifOrientation.rawValue
     }
     
-    func checkIncludFace(request: VNRequest)
+    func checkIncludFace(request: VNRequest, fromBuffer: CMSampleBuffer)
     {
         //perform all the UI updates on the main queue
         guard let results = request.results as? [VNFaceObservation], !isStop else { return }
@@ -198,87 +198,121 @@ extension CameraController : AVCapturePhotoCaptureDelegate,AVCaptureVideoDataOut
 
         // if let callback = self.faceVisionFrameResult
         // {
+//        print("Face length: \(results.count)")
         for face in results
         {
             let transform = CGAffineTransform(scaleX: 1, y: -1).translatedBy(x: 0, y: -self.mScreenCGSize!.height)
-
+            
             let translate = CGAffineTransform.identity.scaledBy(x: self.mScreenCGSize!.width, y: self.mScreenCGSize!.height)
-
+            
             // The coordinates are normalized to the dimensions of the processed image, with the origin at the image's lower-left corner.
             //Tọa độ được chuẩn hóa theo kích thước của hình ảnh được xử lý, với điểm gốc ở góc dưới bên trái của hình ảnh.
-            self.mFacebounds = face.boundingBox.applying(translate).applying(transform)
-
+            //            self.mFacebounds = face.boundingBox.applying(translate).applying(transform)
+            let faceBound = face.boundingBox.applying(translate).applying(transform)
+            
             let pendingWidth = (Int(self.mScreenCGSize!.width) - SwiftOwlDetectionCameraPlugin.sFaceFrameWidth)/2;
             let pendingHeight = (Int(self.mScreenCGSize!.height) - SwiftOwlDetectionCameraPlugin.sFaceFrameHeight)/2;
-
-            let chectRect = CGRect(origin:CGPoint(x:pendingWidth,y:pendingHeight),size:CGSize(width: SwiftOwlDetectionCameraPlugin.sFaceFrameWidth, height: SwiftOwlDetectionCameraPlugin.sFaceFrameHeight));
-//            let pendingWidth = 100
-//            let pendingHeight = 100
-//
-//            let chectRect = CGRect(origin:CGPoint(x:pendingWidth,y:pendingHeight),size:CGSize(width: SwiftOwlDetectionCameraPlugin.sFaceFrameWidth, height: SwiftOwlDetectionCameraPlugin.sFaceFrameHeight));
+            
+            let chectRect = CGRect(
+                origin:CGPoint(x:pendingWidth,y:pendingHeight),
+                size:CGSize(
+                    width: SwiftOwlDetectionCameraPlugin.sFaceFrameWidth,
+                    height: SwiftOwlDetectionCameraPlugin.sFaceFrameHeight
+                )
+            );
+            //            let pendingWidth = 100
+            //            let pendingHeight = 100
+            //
+            //            let chectRect = CGRect(origin:CGPoint(x:pendingWidth,y:pendingHeight),size:CGSize(width: SwiftOwlDetectionCameraPlugin.sFaceFrameWidth, height: SwiftOwlDetectionCameraPlugin.sFaceFrameHeight));
             if(self.mCountWrongPost==0)
             {
                 self.mFaceDetectionHintCallback!(Define.DETECTION_HINT_FIT_CENTER);
                 self.mCountWrongPost = Define.COUNT_WRONG_POST_DELAY_TIME;
             }
-
+            
             //Dòng phát hiện vị trí của khuôn mặt và đưa nó trở lại UI để hiển thị
-            self.faceVisionFrameResult!(face);
-            self.mHasFace = true;
+            //            self.faceVisionFrameResult!(face);
+            //            self.mHasFace = true;
             //Kiểm tra xem có trong khung mặt không
-//            if(chectRect.contains(self.mFacebounds!)){
-//                if(min(chectRect.width,self.mFacebounds!.height) < (chectRect.width)/1.3)
-//                {
-//                    //too far
-//                    if(self.mCountWrongPost < 1000)
-//                    {
-//                        self.mCountWrongPost = Define.COUNT_WRONG_POST_DELAY_TIME;
-//                        self.mFaceDetectionHintCallback!(Define.DETECTION_HINT_FORWARD);
-//                    }
-//                    else{
-//                        self.mCountWrongPost-=1;
-//                    }
-//                }
-//                else{
-//                    self.mHasFace = true;
-//                    self.mCountWrongPost = 0;
-//                    break;
-//                }
-//            }
-//            else
-//            {
-//                if(self.mCountWrongPost < 5)
-//                {
-//                    let distance = sqrt((chectRect.width/2 - self.mFacebounds!.width/2)*2 + (chectRect.height/2 - self.mFacebounds!.height/2)*2);
-//
-//                    //too close
-//                    if(distance<45 && (chectRect.width < self.mFacebounds!.width || chectRect.height < self.mFacebounds!.height))
-//                    {
-//                        self.mCountWrongPost = Define.COUNT_WRONG_POST_DELAY_TIME;
-//                        self.mFaceDetectionHintCallback!(Define.DETECTION_HINT_BACKWARD);
-//                    }
-//                }
-//
-//                if(self.mCountWrongPost>=5)
-//                {
-//                    self.mCountWrongPost-=1;
-//                }
-//            }
+            //            if(chectRect.contains(self.mFacebounds!)){
+            //                if(min(chectRect.width,self.mFacebounds!.height) < (chectRect.width)/1.3)
+            //                {
+            //                    //too far
+            //                    if(self.mCountWrongPost < 1000)
+            //                    {
+            //                        self.mCountWrongPost = Define.COUNT_WRONG_POST_DELAY_TIME;
+            //                        self.mFaceDetectionHintCallback!(Define.DETECTION_HINT_FORWARD);
+            //                    }
+            //                    else{
+            //                        self.mCountWrongPost-=1;
+            //                    }
+            //                }
+            //                else{
+            //                    self.mHasFace = true;
+            //                    self.mCountWrongPost = 0;
+            //                    break;
+            //                }
+            //            }
+            //            else
+            //            {
+            //                if(self.mCountWrongPost < 5)
+            //                {
+            //                    let distance = sqrt((chectRect.width/2 - self.mFacebounds!.width/2)*2 + (chectRect.height/2 - self.mFacebounds!.height/2)*2);
+            //
+            //                    //too close
+            //                    if(distance<45 && (chectRect.width < self.mFacebounds!.width || chectRect.height < self.mFacebounds!.height))
+            //                    {
+            //                        self.mCountWrongPost = Define.COUNT_WRONG_POST_DELAY_TIME;
+            //                        self.mFaceDetectionHintCallback!(Define.DETECTION_HINT_BACKWARD);
+            //                    }
+            //                }
+            //
+            //                if(self.mCountWrongPost>=5)
+            //                {
+            //                    self.mCountWrongPost-=1;
+            //                }
+            //            }
+            
+            
+            let checkScreen = CGRect( origin:CGPoint.zero, size:self.mScreenCGSize! );
+            if(checkScreen.contains(faceBound))
+            {
+                sampleBufferToFaceImage(sampleBuffer: fromBuffer, faceBound: faceBound)
+            }else {
+                print("Face out of bound")
+            }
         }
     }
 
     //Handlers 是指當你想要 Framework 在 Request 產生後執行一些東西或處理這個 Request 時
     func handleFaces(request: VNRequest, error: Error?)
     {
-        if(self.mDetectionMode == Define.QRCODE_MODE)
-        {
+        
+//        if(self.mDetectionMode == Define.QRCODE_MODE)
+//        {
+//            return;
+//        }
+//
+//        if(!mIsHandleResultToServer)
+//        {
+//            DispatchQueue.main.async {
+//                self.checkIncludFace(request:request)
+//            }
+//        }
+        
+    }
+    
+    //Handlers 是指當你想要 Framework 在 Request 產生後執行一些東西或處理這個 Request 時
+    func handleFaces2(fromBuffer: CMSampleBuffer, request: VNRequest, error: Error?)
+    {
+        if(self.mDetectionMode == Define.QRCODE_MODE){
             return;
         }
         
         if(!mIsHandleResultToServer)
         {
             DispatchQueue.main.async {
-                self.checkIncludFace(request:request)
+                self.checkIncludFace(request:request, fromBuffer: fromBuffer)
             }
         }
         
@@ -315,29 +349,47 @@ extension CameraController : AVCapturePhotoCaptureDelegate,AVCaptureVideoDataOut
         }
     }
     
-    //    func metadataOutput(captureOutput: AVCaptureOutput!, didOutputMetadataObjects metadataObjects: [AnyObject]!, fromConnection connection: AVCaptureConnection!)
-    //    {
-    //        // 檢查 metadataObjects 陣列是否為非空值，它至少需包含一個物件
-    //        if metadataObjects == nil || metadataObjects.count == 0
-    //        {
-    //            //            qrCodeFrameView?.frame = CGRectZero
-    //            //            messageLabel.text = "No QR code is detected"
-    //            print("No QR code is detected");
-    //            return
-    //        }
-    //
-    //        //        // 取得元資料（metadata）物件
-    //        let metadataObj = metadataObjects[0] as! AVMetadataMachineReadableCodeObject
-    //        if metadataObj.type == AVMetadataObject.ObjectType.qr
-    //        {
-    //            //倘若發現的原資料與 QR code 原資料相同，便更新狀態標籤的文字並設定邊界
-    //            if metadataObj.stringValue != nil
-    //            {
-    //                let qrText = metadataObj.stringValue
-    //                print("QRcode Msg: \(qrText)");
-    //            }
-    //        }
-    //    }
+    func sampleBufferToFaceImage(sampleBuffer: CMSampleBuffer, faceBound: CGRect?){
+        if(mIsHandleResultToServer){
+            return;
+        }
+        mIsHandleResultToServer = true;
+        
+        let buffer = sampleBuffer;
+        
+        let images = Utility.imageFromSampleBuffer(sampleBuffer: buffer);
+        
+        //flip image for mirror
+        let newImage = images.rotate(radians: .pi)!.withHorizontallyFlippedOrientation()
+        
+        let widthRatio = (newImage.size.width/self.mScreenCGSize!.width);
+        let heightRatio = (newImage.size.height/self.mScreenCGSize!.height);
+        print("WIDTH: \(self.mScreenCGSize!.width) HEIGHT: \(self.mScreenCGSize!.height)");
+
+        var realPixel = rotateRect(
+            CGRect(
+                origin: CGPoint(
+                    x: faceBound!.origin.x * widthRatio,
+                    y: faceBound!.origin.y * heightRatio
+                ),
+                size: CGSize(
+                    width: faceBound!.width * widthRatio,
+                    height: faceBound!.height * heightRatio
+                )
+            )
+        );
+        
+        let scaleX = realPixel.width * 0.3
+        let scaleY = realPixel.height * 0.5
+        
+        realPixel.size.width = realPixel.width + scaleX;
+        realPixel.size.height = realPixel.height + scaleY;
+        realPixel.origin.x = realPixel.origin.x - (scaleX/2);
+        realPixel.origin.y = realPixel.origin.y - (scaleY/2);
+        
+        let cropImage = newImage.cropImage1( newImage , realPixel);
+        self.faceResult(cropImage);
+    }
     
     //鏡頭照片一般的callBack
     //AVCaptureVideoDataOutputSampleBufferDelegate的func 設置給setSampleBufferDelegate
@@ -352,78 +404,21 @@ extension CameraController : AVCapturePhotoCaptureDelegate,AVCaptureVideoDataOut
             requestOptions = [.cameraIntrinsics : cameraIntrinsicData]
         }
         
-        if(!mHasFace)
-        {
-            let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: exifOrientation, options: requestOptions)
-            
-            do {
-                //透過VNRequest去處理所想要處理的Vision
-                try imageRequestHandler.perform(requests)
-            }
-            catch {
-                print(error)
-            }
-        }else
-        {
-//            print("mIsHandleResultToServer: \(mIsHandleResultToServer)");
-            
-            if(!mIsHandleResultToServer)
-            {
-                mIsHandleResultToServer = true;
-                
-                let buffer = sampleBuffer;
-                
-                let images = Utility.imageFromSampleBuffer(sampleBuffer: buffer);
-                
-                //flip image for mirror
-                let newImage = images.rotate(radians: .pi)!.withHorizontallyFlippedOrientation()
-//                let moreGap:CGFloat = 300
-                let widthRatio = (newImage.size.width/self.mScreenCGSize!.width);
-                let heightRatio = (newImage.size.height/self.mScreenCGSize!.height);
-                print("widthRatio:\(widthRatio) heightRatio: \(heightRatio)");
-                
-                var realPiexl = rotateRect(CGRect(origin: CGPoint(x:(self.mFacebounds!.origin.x * widthRatio),y:self.mFacebounds!.origin.y*heightRatio), size:CGSize(width:(self.mFacebounds!.width)*widthRatio,height:(self.mFacebounds!.height)*heightRatio)));
-                realPiexl.size.width = realPiexl.width + 150;
-                realPiexl.size.height = realPiexl.height + 500;
-                realPiexl.origin.x = realPiexl.origin.x - 20 ;
-                realPiexl.origin.y = realPiexl.origin.y - 300;
-                
-                let cropImage = newImage.cropImage1( newImage , realPiexl);
-                
-                //                if let faceCallback = faceResult
-                //                {
-                self.faceResult(cropImage);
-                
-                //                    DispatchQueue.main.async
-                //                    {
-                //                        faceCallback(newImage);
-                //                    }
-                //                }
-            }
+        let faceDetectionRequest2 = VNDetectFaceRectanglesRequest(completionHandler: {request, error in
+            //### Capture `pixelBuffer` inside this closure.
+            self.handleFaces2(fromBuffer: sampleBuffer, request: request, error: error)
+        }) // Default
+        let requests2 = [faceDetectionRequest2]
+        
+        let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: exifOrientation, options: requestOptions)
+        
+        do {
+            //透過VNRequest去處理所想要處理的Vision
+            try imageRequestHandler.perform(requests2)
         }
-        
-        
-        
-        //------------------before-----------------
-        //        let time = Utility.getTime();
-        //        if let image = self.getImageFromSampleBuffer(buffer: sampleBuffer)
-        //        {
-        //            if let faceCallback = faceResult
-        //            {
-        //                DispatchQueue.main.async
-        //                {
-        //                    faceCallback(image);
-        //                }
-        //            }
-        //        }
-        
-        //           DispatchQueue.main.async
-        //           {
-        //              let photoVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PhotoVC") as! PhotoViewController
-        //              photoVC.takenPhoto = image
-        //              self.present(photoVC, animated: true, completion: {self.stopCaptureSession()})
-        //           }
-        //------------------before-----------------
+        catch {
+            print(error)
+        }
     }
     
     func rotateRect(_ rect: CGRect) -> CGRect {
@@ -433,23 +428,6 @@ extension CameraController : AVCapturePhotoCaptureDelegate,AVCaptureVideoDataOut
             .rotated(by: .pi / 2)
             .translatedBy(x: -x, y: -y)
         return rect.applying(transform)
-    }
-    
-    func getImageFromSampleBuffer (buffer:CMSampleBuffer) -> CIImage?
-    {
-        if let pixelBuffer = CMSampleBufferGetImageBuffer(buffer)
-        {
-            let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
-            let context = CIContext()
-            
-            let imageRect = CGRect(x: 0, y: 0, width: CVPixelBufferGetWidth(pixelBuffer), height: CVPixelBufferGetHeight(pixelBuffer))
-            
-            if let image = context.createCGImage(ciImage, from: imageRect)
-            {
-                return ciImage
-            }
-        }
-        return nil
     }
     
     func captureImage(completion: @escaping (UIImage?, Error?) -> Void)
@@ -628,8 +606,8 @@ extension CameraController : AVCapturePhotoCaptureDelegate,AVCaptureVideoDataOut
         func setupVision()
         {
             // Set up Vision Request
-            faceDetectionRequest = VNDetectFaceRectanglesRequest(completionHandler: self.handleFaces) // Default
-            self.requests = [faceDetectionRequest]
+//            faceDetectionRequest = VNDetectFaceRectanglesRequest(completionHandler: self.handleFaces) // Default
+//            self.requests = [faceDetectionRequest]
         }
         
         func configureCaptureDevices() throws
