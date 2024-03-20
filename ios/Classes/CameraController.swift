@@ -346,9 +346,9 @@ extension CameraController : AVCapturePhotoCaptureDelegate,AVCaptureVideoDataOut
 //                let moreGap:CGFloat = 300
         let widthRatio = (newImage.size.width/self.mScreenCGSize!.width);
         let heightRatio = (newImage.size.height/self.mScreenCGSize!.height);
-        print("widthRatio:\(widthRatio) heightRatio: \(heightRatio)");
+        print("WIDTH: \(self.mScreenCGSize!.width) HEIGHT: \(self.mScreenCGSize!.height)");
         
-        var realPiexl = rotateRect(
+        var realPixel = rotateRect(
             CGRect(origin: CGPoint(
                 x:(faceBound!.origin.x * widthRatio),
                 y:faceBound!.origin.y*heightRatio
@@ -359,23 +359,24 @@ extension CameraController : AVCapturePhotoCaptureDelegate,AVCaptureVideoDataOut
             )
         );
         
-        let scaleX = realPiexl.width * 0.3
-        let scaleY = realPiexl.height * 0.5
+        let scaleX = realPixel.width * 0.3
+        let scaleY = realPixel.height * 0.5
         
-        let topRight = (realPiexl.origin.y.rounded(.up) < scaleY/2) || (realPiexl.origin.x.rounded(.up) < scaleX/2);
-        let leftBottom = (realPiexl.origin.y.rounded(.up) > (self.mScreenCGSize!.height)) || (realPiexl.origin.x.rounded(.up) > (self.mScreenCGSize!.width));
+        let topRight = (realPixel.origin.y.rounded(.up) < scaleY/2) || (realPixel.origin.x.rounded(.up) < scaleX/2);
+        let leftBottom = (realPixel.origin.y.rounded(.up) > (self.mScreenCGSize!.height - scaleY/2)) || (realPixel.origin.x.rounded(.up) > (self.mScreenCGSize!.width - scaleX/2));
+        
         
         if(topRight){
-            print("TOP OR RIGHT CORNER")
+            print("TOP OR RIGHT CORNER _______ X: \(realPixel.origin.x.rounded(.up))  |  Y: \(realPixel.origin.y.rounded(.up))")
         }else if(leftBottom){
-            print("LEFT OR BOTTOM CORNER")
+            print("LEFT OR BOTTOM CORNER _____ X: \(realPixel.origin.x.rounded(.up))  |  Y: \(realPixel.origin.y.rounded(.up))")
         }else{
-            realPiexl.size.width = realPiexl.width + scaleX;
-            realPiexl.size.height = realPiexl.height + scaleY;
-            realPiexl.origin.x = realPiexl.origin.x - (scaleX/2);
-            realPiexl.origin.y = realPiexl.origin.y - (scaleY/2);
+            realPixel.size.width = realPixel.width + scaleX;
+            realPixel.size.height = realPixel.height + scaleY;
+            realPixel.origin.x = realPixel.origin.x - (scaleX/2);
+            realPixel.origin.y = realPixel.origin.y - (scaleY/2);
             
-            let cropImage = newImage.cropImage1( newImage , realPiexl);
+            let cropImage = newImage.cropImage1( newImage , realPixel);
             self.faceResult(cropImage);
         }
     }
