@@ -37,6 +37,6 @@ android {
 dependencies {
     implementation group: 'com.google.zxing', name: 'core', version: '3.5.0'
     implementation 'com.google.mlkit:vision-common:17.3.0'
-    implementation 'com.google.mlkit:face-detection:16.1.5'
+    implementation 'com.google.mlkit:face-detection:16.1.7'
 }
 
